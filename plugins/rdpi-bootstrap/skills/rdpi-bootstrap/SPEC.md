@@ -39,7 +39,7 @@ The following are our additions, not from Dex's talks:
 
 `rdpi-bootstrap` is a meta-skill that generates a project-specific set of RDPI phase skills when invoked on a new codebase. It ensures that AI-assisted development follows context engineering best practices: clean context per phase, structured artifact handoff, non-biased research, and iterative delivery.
 
-The meta-skill itself follows RDPI: it interviews the user, saves a spec (`./rdpi/RPI_SKILLS_SPEC.md`), then generates the skills. On re-run, it reads the existing spec and discusses updates before refining the generated skills.
+The meta-skill itself follows RDPI: it interviews the user, saves a spec (`./rdpi/RDPI_SKILLS_SPEC.md`), then generates the skills. On re-run, it reads the existing spec and discusses updates before refining the generated skills.
 
 ---
 
@@ -146,7 +146,7 @@ If the user limits to Sonnet: Opus roles switch to Sonnet with extended thinking
 ### Output
 
 ```
-./rdpi/RPI_SKILLS_SPEC.md          — Spec of user's preferences and project context
+./rdpi/RDPI_SKILLS_SPEC.md          — Spec of user's preferences and project context
 ./rdpi/skills/
 ├── rdpi-research/SKILL.md         — Research phase skill (Questions + blind Research + Spec)
 ├── rdpi-design/SKILL.md           — Design phase skill (interactive Design + Structure/Outline)
@@ -454,7 +454,7 @@ The `{folder}` format defaults to `{YYYY-MM-DD}-{task-id}-{short-name}`. The met
 
 ### First Run
 
-1. **Check for existing spec:** Look for `./rdpi/RPI_SKILLS_SPEC.md`
+1. **Check for existing spec:** Look for `./rdpi/RDPI_SKILLS_SPEC.md`
    - If found → go to Re-run flow
    - If not found → continue with First Run
 
@@ -479,8 +479,8 @@ The `{folder}` format defaults to `{YYYY-MM-DD}-{task-id}-{short-name}`. The met
    - Is extended thinking allowed? Mega? Ultra?
    - Any budget constraints on model usage?
 
-5. **Save spec:** Write answers to `./rdpi/RPI_SKILLS_SPEC.md`
-
+5. **Save spec:** Write answers to `./rdpi/RDPI_SKILLS_SPEC.md`
+   
 6. **Propose agent assignments:** Based on discovered agents, propose which agents handle which RDPI roles:
    - Research: blind research sub-agent
    - Design: structure/outline sub-agent
@@ -497,7 +497,7 @@ The `{folder}` format defaults to `{YYYY-MM-DD}-{task-id}-{short-name}`. The met
 
 ### Re-run
 
-1. **Read `./rdpi/RPI_SKILLS_SPEC.md`**
+1. **Read `./rdpi/RDPI_SKILLS_SPEC.md`**
 2. **Ask the user** what they want to update — using `AskUserQuestion`
 3. **Re-discover agents** (new ones may have been added)
 4. **Update the spec** based on discussion
