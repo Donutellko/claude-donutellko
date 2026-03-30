@@ -12,10 +12,10 @@
     {
       "name": "rdpi-bootstrap",
       "description": "Set up the RDPI (Research → Design → Plan → Implement) development workflow for a project with context-engineered phases",
-      "source": "./",
+      "source": "./plugins/rdpi-bootstrap",
       "strict": false,
       "skills": [
-        "./plugins/rdpi-bootstrap/skills/rdpi-bootstrap"
+        "./skills/rdpi-bootstrap"
       ]
     },
     {

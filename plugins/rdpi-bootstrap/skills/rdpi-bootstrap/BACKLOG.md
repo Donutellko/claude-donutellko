@@ -6,8 +6,8 @@ Open questions, unresolved items, and future improvements. Items move to SPEC.md
 
 ## Unresolved from Spec (Open Questions)
 
-### B-001: Skill Registration Mechanism
-Should the generated skills be registered in a plugin manifest, or is file-based discovery sufficient? Should rdpi-bootstrap generate a `.claude/settings.json` entry to auto-register the generated skills?
+### ~~B-001: Skill Registration Mechanism~~ → Resolved in D-013
+Generated skills go to `.claude/skills/` (auto-discovered). Three options: project-local (default), global, existing plugin.
 
 ### B-002: Missing Phase Artifacts
 What happens when a phase skill is invoked but previous phase artifacts are missing? Options: error with guidance, or offer to run the missing phase.
@@ -68,14 +68,8 @@ Currently out of scope. When added:
 ### B-011: Artifacts Replace Compaction — Disable Auto-Compaction
 Principle 2 says artifacts replace compaction. Should the generated skills explicitly instruct Claude to avoid auto-compaction? Or is this handled by the clean-context-per-phase design?
 
-### B-012: Spec Artifact Template
-Research phase writes `spec.md` but the format is not defined. Need a template with:
-- Requirements (functional + non-functional)
-- Acceptance criteria
-- Constraints
-- Out of scope
-- Task type (feature / bug)
-- Complexity assessment
+### ~~B-012: Spec Artifact Template~~ → Partially resolved
+`RDPI_SKILLS_SPEC.md` template defined in SPEC.md (Registration + Parameter Provenance sections). Research phase `spec.md` template still needs definition (requirements, acceptance criteria, constraints, out of scope, complexity assessment).
 
 ---
 

@@ -1,7 +1,7 @@
 # RDPI Bootstrap — Specification
 
 **Date**: 2026-03-30
-**Status**: Draft v4
+**Status**: Draft v5
 **Authors**: Donat + Claude
 **Based on**: Dex Horthy "Context Engineering" (QRSPI), Dmitry Bereznitsky "Process over Prompts"
 
@@ -145,15 +145,36 @@ If the user limits to Sonnet: Opus roles switch to Sonnet with extended thinking
 
 ### Output
 
+**Option 1: Project-local (default)** — skills in `.claude/skills/`, auto-discovered:
 ```
-./rdpi/RDPI_SKILLS_SPEC.md          — Spec of user's preferences and project context
-./rdpi/skills/
+.claude/skills/
 ├── rdpi-research/SKILL.md         — Research phase skill (Questions + blind Research + Spec)
 ├── rdpi-design/SKILL.md           — Design phase skill (interactive Design + Structure/Outline)
 ├── rdpi-plan/SKILL.md             — Plan phase skill (plan + spec consistency check)
 ├── rdpi-implement/SKILL.md        — Implement phase skill (orchestrator + sub-agents + PR)
 └── README.md                      — Usage guide with phase order and commands
+
+./rdpi/
+├── RDPI_SKILLS_SPEC.md            — Spec of user's preferences and project context
+└── {task-folders}/                — Phase artifacts per task
 ```
+
+**Option 2: Global marketplace (on user request)** — skills in `./rdpi/` as a registered marketplace:
+```
+./rdpi/
+├── .claude-plugin/marketplace.json
+├── rdpi-{project-name}/
+│   └── skills/
+│       ├── rdpi-research/SKILL.md
+│       ├── rdpi-design/SKILL.md
+│       ├── rdpi-plan/SKILL.md
+│       ├── rdpi-implement/SKILL.md
+│       └── README.md
+├── RDPI_SKILLS_SPEC.md
+└── {task-folders}/
+```
+
+See D-013 for registration details and constraints.
 
 Each generated skill:
 - Knows how to execute its phase
@@ -462,7 +483,7 @@ The `{folder}` format defaults to `{YYYY-MM-DD}-{task-id}-{short-name}`. The met
 
 3. **Discover available agents and skills:** Enumerate all agents and skills available in the current environment. Catalog their capabilities for assignment to RDPI phases. Only assign agents that are actually needed per phase (Principle 7: Minimal Tool Surface).
 
-4. **Interview the user** using `AskUserQuestion` — go back and forth:
+4. **Interview the user** using `AskUserQuestion` — go back and forth. Auto-detect what you can from the codebase first, then ask only what's unclear:
    - What types of tasks will you use RDPI for? (feature impl, bug fixing, both)
    - Artifact folder format — default: `./rdpi/{YYYY-MM-DD}-{task-id}-{short-name}`
    - Do you create pull requests as part of your workflow? At which point?
@@ -479,21 +500,44 @@ The `{folder}` format defaults to `{YYYY-MM-DD}-{task-id}-{short-name}`. The met
    - Is extended thinking allowed? Mega? Ultra?
    - Any budget constraints on model usage?
 
-5. **Save spec:** Write answers to `./rdpi/RDPI_SKILLS_SPEC.md`
-   
-6. **Propose agent assignments:** Based on discovered agents, propose which agents handle which RDPI roles:
+5. **Confirm all parameters (D-014):** Before saving, present a single summary of ALL values — both interview answers and auto-detected — with provenance:
+
+   ```
+   Here's what I've configured:
+
+     Tech stack:      Python 3.13, FastAPI, Strands SDK   (from pyproject.toml)
+     Build command:   make format && make check            (from CLAUDE.md)
+     Task tracker:    Rally (DE*, US* prefixes)            (user interview)
+     PR workflow:     Draft PR                             (from existing workflow)
+     Diagrams:        Mermaid                              (default)
+     Folder format:   ./rdpi/{YYYY-MM-DD}-{task-id}-...   (default)
+     Browser testing: No                                   (default)
+     ...
+
+     Anything to change? (Enter to confirm all)
+   ```
+
+   This is the user's last chance to catch auto-detection mistakes before they propagate into generated skills.
+
+6. **Save spec:** Write confirmed answers to `./rdpi/RDPI_SKILLS_SPEC.md` (see [RDPI_SKILLS_SPEC Template](#rdpi_skills_spec-template) below). Every value includes its Source.
+
+7. **Propose agent assignments:** Based on discovered agents, propose which agents handle which RDPI roles:
    - Research: blind research sub-agent
    - Design: structure/outline sub-agent
    - Plan: spec-consistency checker sub-agent
    - Implement: orchestrator, specialized coders (per role), PR sub-agent, optionally deploy/monitor agents
    - Present the mapping to the user for confirmation
 
-7. **Generate phase skills:** Create the 4 RDPI skills + README in `./rdpi/skills/`
+8. **Generate phase skills:** Create the 4 RDPI skills + README. Default: `.claude/skills/`. If user wants global access: `./rdpi/rdpi-{project-name}/skills/` as marketplace (see D-013).
    - Each skill reads its phase template from the meta-skill's bundled references
    - Each skill is customized with project-specific: paths, build commands, conventions, assigned agents
    - Each skill must stay under ~40 instructions
 
-8. **Output:** Display what was created and how to start using it. Include realistic expectations: this workflow is designed for medium-to-large tasks where upfront investment pays off. For small fixes, use direct prompts. Expect 2-3x productivity improvement on suitable tasks.
+9. **Ask about global registration (D-013):** "Want to use these skills in other projects too?"
+   - No (default) → done, skills already work via `.claude/skills/`
+   - Yes → create marketplace in `./rdpi/`, register in `~/.claude/settings.json`
+
+10. **Output:** Display what was created and how to start using it. Include realistic expectations: this workflow is designed for medium-to-large tasks where upfront investment pays off. For small fixes, use direct prompts. Expect 2-3x productivity improvement on suitable tasks.
 
 ### Re-run
 
@@ -503,6 +547,85 @@ The `{folder}` format defaults to `{YYYY-MM-DD}-{task-id}-{short-name}`. The met
 4. **Update the spec** based on discussion
 5. **Regenerate/refine the phase skills** to reflect changes
 6. **Show diff** of what changed
+
+---
+
+## RDPI_SKILLS_SPEC Template
+
+The spec file captures all bootstrap decisions with provenance tracking. Bootstrap must record **where each value came from** so re-runs and debugging are possible.
+
+```markdown
+# RDPI Skills Spec — {Project Name}
+
+**Generated:** {date}
+**Generator:** rdpi-bootstrap
+
+---
+
+## Registration
+
+- **Skills location:** {path where skills were placed}
+- **Registration method:** {`.claude/skills/` (auto-discovery) | marketplace in `./rdpi/`}
+- **Marketplace name:** {if marketplace: name in `extraKnownMarketplaces`}
+- **Global settings entry:** {if marketplace: path in `~/.claude/settings.json`}
+- **Project settings entry:** {if marketplace: `enabledPlugins` key in `.claude/settings.json`}
+
+## Project Context
+
+| Parameter | Value | Source |
+|-----------|-------|--------|
+| Tech stack | ... | auto-detected ({file}) |
+| Build command | ... | auto-detected (CLAUDE.md) |
+| Test command | ... | auto-detected (CLAUDE.md) |
+| Task tracker | ... | user interview |
+| Diagram format | ... | default / user choice |
+
+## RDPI Configuration
+
+| Parameter | Value | Source |
+|-----------|-------|--------|
+| Task types | ... | user interview |
+| Artifact folder format | ... | default / user choice |
+| PR workflow | ... | auto-detected ({file}) / user interview |
+| Multi-phase default | ... | user interview |
+| Deploy capability | ... | auto-detected ({file}) |
+| Browser testing | ... | default (No) |
+
+## Model Assignments
+
+| Role | Model | Thinking | Source |
+|------|-------|----------|--------|
+| Research: Questions | ... | ... | spec default / user override |
+| ... | ... | ... | ... |
+
+## Agent Assignments
+
+| Role | Agent Type | Notes |
+|------|-----------|-------|
+| ... | ... | ... |
+
+## Discovered Conventions
+
+| Convention | Value | Source |
+|-----------|-------|--------|
+| Branch naming | ... | auto-detected (git log) |
+| Commit style | ... | auto-detected (git log) |
+| Quality gate | ... | auto-detected (CLAUDE.md) |
+| ... | ... | ... |
+
+## User Preferences
+
+Items explicitly stated by the user during interview (not auto-detected).
+
+- ...
+```
+
+### Template Rules
+
+1. **Every value has a Source column.** Valid sources: `auto-detected ({file/tool})`, `user interview`, `default`, `spec default`, `user override` (when user changed a spec default or auto-detected value).
+2. **Registration section is mandatory** — even for `.claude/skills/` (auto-discovery), record the path and method.
+3. **Model deviations from spec defaults must note the reason** — e.g., "user override" or "budget constraint".
+4. **User Preferences section captures only explicit user statements**, not inferences. Keep it short.
 
 ---
 
@@ -567,6 +690,6 @@ Rules:
 
 ## Open Questions
 
-- Should the generated skills be registered in a plugin manifest, or is file-based discovery sufficient?
-- Should rdpi-bootstrap generate a `.claude/settings.json` entry to auto-register the generated skills?
-- What happens when a phase skill is invoked but previous phase artifacts are missing — error, or offer to run the missing phase?
+- ~~Should the generated skills be registered in a plugin manifest, or is file-based discovery sufficient?~~ → Resolved in D-013
+- ~~Should rdpi-bootstrap generate a `.claude/settings.json` entry to auto-register the generated skills?~~ → Resolved in D-013
+- What happens when a phase skill is invoked but previous phase artifacts are missing — error, or offer to run the missing phase? (B-002)

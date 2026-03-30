@@ -180,3 +180,117 @@ Tracks key design decisions, alternatives considered, and rationale. Updated as 
 **Rationale:** First slice establishes direction — catching errors early is high-leverage. Subsequent slices in the same pattern are lower-risk. Dex says checkpoints are for "sensitive or hard or complex" work, not mandatory everywhere.
 
 **Source:** Devil's advocate review round 2 (D-12), discussion.
+
+---
+
+## D-013: Skill Registration — Two-Tier Strategy
+
+**Decision:** Generated phase skills have two placement modes:
+
+### Option 1: Project-local (default, recommended)
+
+Skills go into `.claude/skills/` — auto-discovered by Claude Code, zero config.
+
+```
+<project>/
+├── .claude/skills/
+│   ├── rdpi-research/SKILL.md
+│   ├── rdpi-design/SKILL.md
+│   ├── rdpi-plan/SKILL.md
+│   └── rdpi-implement/SKILL.md
+└── rdpi/
+    ├── RDPI_SKILLS_SPEC.md
+    ├── MANIFEST.md
+    └── {task-folders}/
+```
+
+Works immediately. No marketplace, no settings edits.
+
+### Option 2: Global marketplace (on user request)
+
+If user wants skills available across projects, bootstrap creates a marketplace in `./rdpi/` and registers it globally.
+
+```
+<project>/rdpi/
+├── .claude-plugin/
+│   └── marketplace.json
+├── rdpi-{project-name}/          ← plugin named after project
+│   └── skills/
+│       ├── rdpi-research/SKILL.md
+│       ├── rdpi-design/SKILL.md
+│       ├── rdpi-plan/SKILL.md
+│       └── rdpi-implement/SKILL.md
+├── RDPI_SKILLS_SPEC.md
+├── MANIFEST.md
+└── {task-folders}/
+```
+
+Registration (bootstrap automates both):
+- `~/.claude/settings.json` → `extraKnownMarketplaces` with **absolute path** to `./rdpi/`
+- `.claude/settings.json` (project) → `enabledPlugins` to scope activation
+
+### Flow
+
+Bootstrap asks after generating skills: "Want to use these skills in other projects too?"
+- No (default) → Option 1
+- Yes → Option 2, bootstrap creates marketplace + registers
+
+### Constraints discovered during implementation
+
+1. `extraKnownMarketplaces` only works in **global** `~/.claude/settings.json`, not project-level
+2. Marketplace paths must be **absolute** (relative paths don't resolve)
+3. Plugin `"source": "./"` is valid (marketplace root = plugin root), but nested `rdpi/rdpi/rdpi/skills` must be avoided — hence `rdpi/rdpi-{project-name}/skills/`
+
+**Resolves:** B-001
+
+**Source:** Discussion + implementation findings, 2026-03-30.
+
+---
+
+## D-014: Auto-Detected Defaults Must Be Shown, Not Hidden
+
+**Decision:** When bootstrap auto-detects a value (from codebase, config, or conventions), it must **show the value to the user** for confirmation. Never silently substitute defaults.
+
+**Pattern — "Detect → Summarize → Confirm":**
+
+After the interactive interview, bootstrap presents a single summary of ALL parameters — both asked and auto-detected — and asks the user to confirm or adjust:
+
+```
+Here's what I've configured:
+
+  Tech stack:      Python 3.11, FastAPI, PostgreSQL    (from pyproject.toml)
+  PR workflow:     Draft PR → review → merge            (from existing workflow)
+  Deploy:          deploy-nonprod.yml available          (from CLAUDE.md)
+  Diagrams:        Mermaid                               (default)
+  Folder format:   ./rdpi/{YYYY-MM-DD}-{task-id}-{short-name}  (default)
+  Browser testing: No                                    (default)
+
+  Anything to change? (Enter to confirm all)
+```
+
+Values marked `(from ...)` show what was auto-detected and where. Values marked `(default)` are convention-based assumptions.
+
+**Alternatives considered:**
+- Ask every parameter individually (too many questions, slow UX)
+- Silently auto-detect without showing (user doesn't know what was decided, can't correct mistakes)
+
+**Rationale:** "Not asking" and "not showing what was decided" are different things. The first is good UX (reduce friction). The second is bad UX (user loses control). The summary step is cheap — one confirmation instead of N questions — but catches auto-detection errors before they propagate into generated skills.
+
+**Source:** UX review of first bootstrap run, 2026-03-30.
+
+---
+
+## D-015: RDPI_SKILLS_SPEC Must Track Parameter Provenance and Registration
+
+**Decision:** Every value in `RDPI_SKILLS_SPEC.md` must record its **source** (auto-detected from which file, user interview, default, user override). Registration details (where skills are placed, marketplace name, settings entries) must be recorded.
+
+**What was missing in first run:**
+- No record of where plugin was registered (`~/.claude/settings.json` key, `.claude/settings.json` entry)
+- No provenance — impossible to tell which values were auto-detected vs asked vs defaulted
+- Model assignment deviations from spec defaults (Plan: Opus instead of Sonnet) unexplained
+
+**Template:** Defined in SPEC.md under "RDPI_SKILLS_SPEC Template". Every parameter table has a Source column.
+
+**Partially resolves:** B-012
+
+**Source:** Review of generated RDPI_SKILLS_SPEC.md from first bootstrap run, 2026-03-30.
