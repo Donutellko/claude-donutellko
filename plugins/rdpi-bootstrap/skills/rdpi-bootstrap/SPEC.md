@@ -101,6 +101,39 @@ If the conversation within a phase goes sideways (user has corrected the agent 2
 
 The user is expected to read and verify code — not just trust artifacts. Code review happens in the Draft PR. During Research, the user should spot-check key code paths identified by the research agent.
 
+### 13. Right Model for the Right Job
+
+Each agent role should use the appropriate model and thinking level. More capable models cost more and are slower — use them only where the task demands it.
+
+**Default model assignments:**
+
+| Role | Model | Thinking | Rationale |
+|------|-------|----------|-----------|
+| Research: Questions (main agent) | Opus | standard | Interview needs depth of understanding |
+| Research: Blind sub-agent | Sonnet | standard | Factual code exploration |
+| Research: Spec writing | Opus | extended | Synthesis of interview + research, key artifact |
+| Design: Interactive document | Opus | extended | Architecture decisions — the most important phase |
+| Design: Structure/Outline sub-agent | Sonnet | extended | Decomposition requires reasoning about slices |
+| Plan: Generation | Sonnet | extended | File paths, ordering, dependencies |
+| Plan: Spec consistency checker | Sonnet | standard | Document comparison |
+| Implement: Orchestrator | Opus | standard | Coordination, not creative work |
+| Implement: Coders | Sonnet | standard | Code from plan — mechanical |
+| Implement: PR creation | Sonnet | standard | Straightforward |
+| Deploy/Monitor: Log reader | Haiku | standard | Reading logs, simple checks |
+| Deploy/Monitor: Browser testing | Sonnet | standard | Navigation logic needed |
+
+**Thinking levels:**
+- **standard** — default for most tasks
+- **extended** — Design, Spec writing, Plan generation (reasoning required)
+- **mega / ultra** — not default; opt-in for Full-depth Design on exceptionally complex tasks
+
+**Bootstrap questions about models:**
+- What is the most powerful model allowed? (Opus / Sonnet / Haiku)
+- Is extended thinking allowed? Mega? Ultra?
+- Are there budget constraints? (if yes — downgrade Opus → Sonnet where possible)
+
+If the user limits to Sonnet: Opus roles switch to Sonnet with extended thinking. If limited to Haiku: everything runs on Haiku (with a warning about quality degradation).
+
 ---
 
 ## What rdpi-bootstrap Produces
@@ -442,6 +475,9 @@ The `{folder}` format defaults to `{YYYY-MM-DD}-{task-id}-{short-name}`. The met
    - Can the agent deploy autonomously? What's the deploy process?
    - Is browser-based testing available? (for post-deploy verification)
    - Default to multi-phase workflow for all tasks, or only large ones?
+   - What is the most powerful model allowed? (Opus / Sonnet / Haiku)
+   - Is extended thinking allowed? Mega? Ultra?
+   - Any budget constraints on model usage?
 
 5. **Save spec:** Write answers to `./rdpi/RPI_SKILLS_SPEC.md`
 
