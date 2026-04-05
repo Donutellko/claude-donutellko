@@ -475,6 +475,12 @@ The `{folder}` format defaults to `{YYYY-MM-DD}-{task-id}-{short-name}`. The met
 
 ### First Run
 
+0. **Show introduction (B-018):** Before any tool calls or questions, output the two-table introduction:
+   - Table 1: Phase → Command mapping for all 4 RDPI phases
+   - QRSPI explanation line: "RDPI maps to QRSPI (Dex Horthy's methodology): Q→R→D→S→P→I. Each phase runs one or more of these stages internally, with sub-agents for isolation."
+   - Table 2: Full sub-phase breakdown (Phase / Sub-phase / Who / Output / User action)
+   - Follow with: "Now I'll ask you a few questions and scan the codebase to tailor these skills to your project."
+
 1. **Check for existing spec:** Look for `./rdpi/RDPI_SKILLS_SPEC.md`
    - If found → go to Re-run flow
    - If not found → continue with First Run
@@ -500,7 +506,7 @@ The `{folder}` format defaults to `{YYYY-MM-DD}-{task-id}-{short-name}`. The met
    - Is extended thinking allowed? Mega? Ultra?
    - Any budget constraints on model usage?
 
-5. **Confirm all parameters (D-014):** Before saving, present a single summary of ALL values — both interview answers and auto-detected — with provenance:
+5. **Confirm all parameters (D-014):** Before saving, if any confirmed setting deviates from the default workflow shown in the Step 0 introduction, output a concise pre-confirm deviation summary (e.g., "No Deploy/Verify step — not configured." / "Design phase skipped by default — Sonnet-only budget."). Skip entirely if nothing deviates. Then present a single summary of ALL values — both interview answers and auto-detected — with provenance:
 
    ```
    Here's what I've configured:
@@ -537,7 +543,7 @@ The `{folder}` format defaults to `{YYYY-MM-DD}-{task-id}-{short-name}`. The met
    - No (default) → done, skills already work via `.claude/skills/`
    - Yes → create marketplace in `./rdpi/`, register in `~/.claude/settings.json`
 
-10. **Output:** Display what was created and how to start using it. Include realistic expectations: this workflow is designed for medium-to-large tasks where upfront investment pays off. For small fixes, use direct prompts. Expect 2-3x productivity improvement on suitable tasks. End with: "If anything in the RDPI workflow doesn't fit your needs, run `/rdpi-bootstrap <description of desired changes>` to refine it."
+10. **Output (B-018):** Display what was created and how to start using it. Include realistic expectations: this workflow is designed for medium-to-large tasks where upfront investment pays off. For small fixes, use direct prompts. Expect 2-3x productivity improvement on suitable tasks. End with: "If anything in the RDPI workflow doesn't fit your needs, run `/rdpi-bootstrap <description of desired changes>` to refine it." Then repeat Table 1 (commands only — not the full sub-phase table) and add: "Easy to remember — it's in the name: **R**DPI. Always start with **R**: `/rdpi-research`."
 
 ### Re-run
 

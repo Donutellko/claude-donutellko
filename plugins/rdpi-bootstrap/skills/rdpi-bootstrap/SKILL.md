@@ -25,6 +25,47 @@ Check if `./rdpi/RDPI_SKILLS_SPEC.md` exists.
 
 ## First Run — 10 Steps
 
+### Step 0: Show introduction
+
+**Before any tool calls or questions**, output the following introduction verbatim:
+
+---
+
+**Your RDPI workflow:**
+
+| Phase | Command |
+|-------|---------|
+| Research | `/rdpi-research <task description>` |
+| Design | `/rdpi-design ./rdpi/{folder}` |
+| Plan | `/rdpi-plan ./rdpi/{folder}` |
+| Implement | `/rdpi-implement ./rdpi/{folder}` |
+
+> Clear context between each phase — open a fresh session before running the next command.
+
+RDPI maps to QRSPI (Dex Horthy's methodology): **Q**uestions → **R**esearch → **D**esign → **S**tructure → **P**lan → **I**mplement. Each phase runs one or more of these stages internally, with sub-agents for isolation.
+
+| Phase | Sub-phase | Who | Output | User action |
+|-------|-----------|-----|--------|-------------|
+| **Research** | Questions | Main ↔ user | Interview notes | Answer questions |
+| | Blind research | Sub-agent | `research.md` | — |
+| | Spec writing | Main agent | `spec.md` | Review (optional) |
+| | Complexity check | Main agent | Next step rec. | Choose next phase |
+| **Design** | Interactive design | Main ↔ user | `design.md` | Shape the design |
+| | Structure/Outline | Sub-agent | `structure-outline.md` | **Review (mandatory)** |
+| **Plan** | Plan generation | Sub-agent | `plan.md` | — |
+| | Spec consistency | Sub-agent | `spec-consistency.md` | — |
+| | Summary | Main agent | `summary.md` | Read summary |
+| **Implement** | Branch setup | Orchestrator | Git branch | — |
+| | Slice execution | Sub-agents | Code | **Test first slice** |
+| | Draft PR | Sub-agent | PR link | **Code review** |
+| | Deploy/verify | Sub-agents | Logs, screenshots | Verify (opt-in) |
+
+*Design and Plan are optional — Research recommends which phases to skip based on task complexity.*
+
+---
+
+Then say: "Now I'll ask you a few questions and scan the codebase to tailor these skills to your project."
+
 ### Step 1: Discover the environment
 
 Before asking the user anything, gather context silently:
@@ -77,7 +118,16 @@ For anything not explicitly asked, silently auto-detect from the codebase:
 
 ### Step 5: Confirm ALL parameters (D-014 — mandatory)
 
-**Do NOT silently substitute defaults.** Present a single summary of ALL parameters — both interview answers and auto-detected — with provenance. Use this exact format:
+**Do NOT silently substitute defaults.**
+
+**Pre-confirm deviation summary (B-018):** Before showing the confirmation table, if any confirmed setting differs from the default workflow shown in the Step 0 introduction, output a concise note for each deviation. Examples:
+- "No Deploy/Verify step — not configured for this project."
+- "Design phase skipped by default — Sonnet-only budget."
+- "Multi-phase delivery enabled — Plan will include slice breakdown."
+
+If nothing differs from defaults, skip this entirely — show nothing.
+
+Then present a single summary of ALL parameters — both interview answers and auto-detected — with provenance. Use this exact format:
 
 ```
 Here's what I've configured:
@@ -140,6 +190,7 @@ For each phase, read the corresponding template from this skill's `references/` 
 3. Read `references/plan-template.md` → write `.claude/skills/rdpi-plan/SKILL.md`
 4. Read `references/implement-template.md` → write `.claude/skills/rdpi-implement/SKILL.md`
 5. Read `references/readme-template.md` → write `.claude/skills/README.md`
+   **The README must include both tables** (commands table + sub-phases table) with the QRSPI explanation line between them, using project-specific values for `{{ARTIFACT_FOLDER_FORMAT}}` and other placeholders. The readme-template.md already contains the structure for these tables.
 
 When customizing templates, replace placeholders with project-specific values:
 - `{{TECH_STACK}}`, `{{BUILD_CMD}}`, `{{TEST_CMD}}`, `{{TASK_TRACKER}}`
@@ -181,14 +232,24 @@ Created RDPI workflow:
   .claude/skills/rdpi-implement/SKILL.md    — Implement phase
   .claude/skills/README.md                  — Usage guide
 
-To start using RDPI on a task:
-  /rdpi-research <describe your task>
-
 Note: RDPI is designed for medium-to-large tasks where upfront investment
 pays off. For small fixes, direct prompts are faster.
 
 If anything in the RDPI workflow doesn't fit your needs, run `/rdpi-bootstrap <description of desired changes>` to refine it.
 ```
+
+Then repeat Table 1 (commands only):
+
+```
+| Phase | Command |
+|-------|---------|
+| Research | `/rdpi-research <task description>` |
+| Design | `/rdpi-design ./rdpi/{folder}` |
+| Plan | `/rdpi-plan ./rdpi/{folder}` |
+| Implement | `/rdpi-implement ./rdpi/{folder}` |
+```
+
+Then add: "Easy to remember — it's in the name: **R**DPI. Always start with **R**: `/rdpi-research`."
 
 **If global marketplace:**
 ```
@@ -201,6 +262,8 @@ Created RDPI workflow:
 
 If anything in the RDPI workflow doesn't fit your needs, run `/rdpi-bootstrap <description of desired changes>` to refine it.
 ```
+
+Then repeat Table 1 (commands only) and the "Easy to remember" line as above.
 
 ---
 

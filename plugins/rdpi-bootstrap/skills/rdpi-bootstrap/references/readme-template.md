@@ -8,6 +8,37 @@ RDPI splits AI-assisted development into 4 phases, each running in a **fresh con
 
 Based on [Dex Horthy's Context Engineering (QRSPI)](https://www.youtube.com/watch?v=example) and Dmitry Bereznitsky's "Process over Prompts."
 
+## Phase Commands
+
+| Phase | Command |
+|-------|---------|
+| Research | `/rdpi-research <task description>` |
+| Design | `/rdpi-design ./rdpi/{{ARTIFACT_FOLDER_FORMAT}}` |
+| Plan | `/rdpi-plan ./rdpi/{{ARTIFACT_FOLDER_FORMAT}}` |
+| Implement | `/rdpi-implement ./rdpi/{{ARTIFACT_FOLDER_FORMAT}}` |
+
+> Clear context between each phase — open a fresh session before running the next command.
+
+RDPI maps to QRSPI (Dex Horthy's methodology): **Q**uestions → **R**esearch → **D**esign → **S**tructure → **P**lan → **I**mplement. Each phase runs one or more of these stages internally, with sub-agents for isolation.
+
+| Phase | Sub-phase | Who | Output | User action |
+|-------|-----------|-----|--------|-------------|
+| **Research** | Questions | Main ↔ user | Interview notes | Answer questions |
+| | Blind research | Sub-agent | `research.md` | — |
+| | Spec writing | Main agent | `spec.md` | Review (optional) |
+| | Complexity check | Main agent | Next step rec. | Choose next phase |
+| **Design** | Interactive design | Main ↔ user | `design.md` | Shape the design |
+| | Structure/Outline | Sub-agent | `structure-outline.md` | **Review (mandatory)** |
+| **Plan** | Plan generation | Sub-agent | `plan.md` | — |
+| | Spec consistency | Sub-agent | `spec-consistency.md` | — |
+| | Summary | Main agent | `summary.md` | Read summary |
+| **Implement** | Branch setup | Orchestrator | Git branch | — |
+| | Slice execution | Sub-agents | Code | **Test first slice** |
+| | Draft PR | Sub-agent | PR link | **Code review** |
+| | Deploy/verify | Sub-agents | Logs, screenshots | Verify (opt-in) |
+
+*Design and Plan are optional — Research recommends which phases to skip based on task complexity.*
+
 ## Quick Start
 
 ```
@@ -23,15 +54,6 @@ Then follow the recommendations at the end of each phase. The typical flow:
 ```
 
 **Important:** Clear your context (start a new conversation) between each phase. The artifacts on disk carry all the state — the context window is disposable.
-
-## Phase Commands
-
-| Command | What it does | When to use |
-|---------|-------------|-------------|
-| `/rdpi-research <task>` | Interview → blind research → spec → complexity assessment | Always start here |
-| `/rdpi-design <folder>` | Interactive design → structure/outline with vertical slices | Complex tasks |
-| `/rdpi-plan <folder>` | Execution plan → spec consistency check → summary | After Design, or skip Design for medium tasks |
-| `/rdpi-implement <folder>` | Branch → code → verify → Draft PR | After Plan, or skip Plan+Design for simple tasks |
 
 ## Complexity-Based Shortcuts
 
