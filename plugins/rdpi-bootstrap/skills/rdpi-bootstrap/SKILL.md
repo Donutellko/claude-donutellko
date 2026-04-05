@@ -186,6 +186,8 @@ To start using RDPI on a task:
 
 Note: RDPI is designed for medium-to-large tasks where upfront investment
 pays off. For small fixes, direct prompts are faster.
+
+If anything in the RDPI workflow doesn't fit your needs, run `/rdpi-bootstrap <description of desired changes>` to refine it.
 ```
 
 **If global marketplace:**
@@ -196,6 +198,8 @@ Created RDPI workflow:
   ... (other skills)
   Registered in ~/.claude/settings.json (extraKnownMarketplaces)
   Registered in .claude/settings.json (enabledPlugins)
+
+If anything in the RDPI workflow doesn't fit your needs, run `/rdpi-bootstrap <description of desired changes>` to refine it.
 ```
 
 ---

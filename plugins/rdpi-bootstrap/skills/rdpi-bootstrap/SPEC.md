@@ -537,7 +537,7 @@ The `{folder}` format defaults to `{YYYY-MM-DD}-{task-id}-{short-name}`. The met
    - No (default) → done, skills already work via `.claude/skills/`
    - Yes → create marketplace in `./rdpi/`, register in `~/.claude/settings.json`
 
-10. **Output:** Display what was created and how to start using it. Include realistic expectations: this workflow is designed for medium-to-large tasks where upfront investment pays off. For small fixes, use direct prompts. Expect 2-3x productivity improvement on suitable tasks.
+10. **Output:** Display what was created and how to start using it. Include realistic expectations: this workflow is designed for medium-to-large tasks where upfront investment pays off. For small fixes, use direct prompts. Expect 2-3x productivity improvement on suitable tasks. End with: "If anything in the RDPI workflow doesn't fit your needs, run `/rdpi-bootstrap <description of desired changes>` to refine it."
 
 ### Re-run
 
