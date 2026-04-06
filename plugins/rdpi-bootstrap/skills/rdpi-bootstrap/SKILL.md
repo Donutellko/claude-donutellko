@@ -1,13 +1,9 @@
 ---
 name: rdpi-bootstrap
 description: >
-  Set up the RDPI (Research → Design → Plan → Implement) development workflow for a project.
-  Generates 4 project-specific phase skills that guide AI-assisted development through context-engineered phases.
-  Use this skill whenever the user wants to set up structured AI development workflow, bootstrap RDPI,
-  configure development phases, or mentions "context engineering" / "QRSPI" methodology.
-  Also trigger when the user says "set up rdpi", "bootstrap project", "configure AI workflow",
-  "rdpi-bootstrap", or wants to organize AI-assisted development into phases with clean context boundaries.
-  Also trigger on re-runs: "update rdpi", "reconfigure rdpi", "re-bootstrap".
+  One-time setup: generates project-tailored RDPI phase skills (Research, Design, Plan, Implement).
+  Re-run with a description of desired changes to refine the generated skills.
+  Trigger: user says "set up rdpi", "bootstrap rdpi", "configure AI workflow", or "rdpi-bootstrap".
 ---
 
 # RDPI Bootstrap

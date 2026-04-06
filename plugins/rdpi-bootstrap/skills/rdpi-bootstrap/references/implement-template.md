@@ -1,10 +1,7 @@
 ---
 name: rdpi-implement
 description: >
-  Run the Implement phase of RDPI workflow: set up a clean branch, execute the plan with sub-agents,
-  and create a Draft PR for code review. Use this after Plan phase completes,
-  when the user says "/rdpi-implement", or when skipping Design+Plan for simple tasks
-  (going straight from Research to Implement).
+  Execute the plan. Runs code with sub-agents, creates Draft PR. Review first slice + final PR.
 ---
 
 # RDPI Implement

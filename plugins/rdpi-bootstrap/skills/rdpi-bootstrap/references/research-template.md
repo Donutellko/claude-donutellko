@@ -1,9 +1,8 @@
 ---
 name: rdpi-research
 description: >
-  Run the Research phase of RDPI workflow: interview the user about the task, conduct blind codebase research,
-  write a requirements spec, and recommend the next phase. Use this whenever the user wants to start a new
-  RDPI task, says "/rdpi-research", or wants to research a feature/bug before implementing it.
+  Start your task implementation. Paste the ticket ID or description and answer questions. Produces: spec.md.
+  Trigger: user pastes a ticket/issue ID, describes a feature to build, or reports a bug to fix.
 ---
 
 # RDPI Research

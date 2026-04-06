@@ -1,10 +1,7 @@
 ---
 name: rdpi-plan
 description: >
-  Run the Plan phase of RDPI workflow: convert the Design and Structure into a concrete execution plan,
-  verify plan covers all Spec requirements, and present a brief summary to the user.
-  Use this after Design phase completes, when the user says "/rdpi-plan",
-  or when skipping Design for medium-complexity tasks (going straight from Research to Plan).
+  Convert design into execution plan. Produces: plan.md + brief summary for you to review.
 ---
 
 # RDPI Plan

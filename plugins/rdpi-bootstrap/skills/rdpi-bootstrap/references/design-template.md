@@ -1,9 +1,7 @@
 ---
 name: rdpi-design
 description: >
-  Run the Design phase of RDPI workflow: create an interactive design document collaboratively with the user,
-  then generate a Structure/Outline with vertical slices. Use this after Research phase completes,
-  when the user says "/rdpi-design", or wants to design the architecture before implementing.
+  Define what to build. Interactive design session based on Research spec. Produces: structure-outline.md (your review required).
 ---
 
 # RDPI Design

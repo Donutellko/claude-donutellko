@@ -174,6 +174,21 @@ Each phase skill:
 
 Update in: SKILL.md Step 0 intro table, all 4 phase templates (references/), SPEC.md phase descriptions.
 
+### B-025: Generated Phase Skill Descriptions Must Be Human-Facing
+RDPI phase skills are invoked by the user, not auto-triggered by LLM. The `description:` field in each generated SKILL.md frontmatter should be short and human-readable — not a trigger-detection prompt.
+
+Proposed descriptions:
+- **rdpi-research:** Human part first: "Start your task implementation. Paste the ticket ID or description and answer questions. Produces: `spec.md`." Then LLM trigger part appended (not human-readable): auto-trigger when user pastes issue ID, ticket number, or describes a task to implement.
+- **rdpi-design:** "Define what to build. Reviews spec, interactive design session. Produces: `structure-outline.md` (review required)." — human-invoked only, no auto-trigger.
+- **rdpi-plan:** "Convert design into execution plan. Produces: `plan.md` + brief summary for you to review." — human-invoked only.
+- **rdpi-implement:** "Execute the plan. Runs code, creates Draft PR. Review first slice + final PR." — human-invoked only.
+
+Description format: human-readable sentence first, LLM trigger keywords appended after a separator (e.g. a blank line or `---`) so it doesn't appear in UI but is still parsed by the model.
+
+Also applies to `rdpi-bootstrap` itself — one-time setup skill, no auto-trigger.
+
+Update in: all 4 phase templates (`references/`), and the bootstrap SKILL.md description field.
+
 ### B-022: Multi-Service Scope Question
 In monorepos with multiple independent services (e.g. 7 agents each with their own Makefile, pyproject.toml, CLAUDE.md), bootstrap must ask: "Which service(s) will you use RDPI for?" before generating skills. Generated skills must be scoped to a specific service root — not repo root — so `make check`, `make tests`, and file paths resolve correctly.
 **What to detect:** multiple `pyproject.toml` or `Makefile` files at depth >1 → trigger the question.
