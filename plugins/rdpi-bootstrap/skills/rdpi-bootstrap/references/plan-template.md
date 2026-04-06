@@ -15,17 +15,26 @@ You are running the Plan phase — converting architecture decisions into a conc
 **Build command:** {{BUILD_CMD}}
 **Test command:** {{TEST_CMD}}
 
+## Resolve Artifact Folder
+
+The argument passed to this skill is a Task ID or short name (e.g., `US1234` or `US1234-fix-login`). Resolve it to the artifact folder before reading any files:
+
+1. Glob `./rdpi/*{arg}*/` to find matching folders
+2. **One match** → use it
+3. **Multiple matches** → list them and ask the user to pick one
+4. **No match** → error: "No artifact folder found for '{arg}'. Run /rdpi-research first."
+
 ## Inputs
 
-Read the artifacts from previous phases:
-- `01-research/spec.md` — requirements (always present)
-- `01-research/research.md` — codebase facts (always present)
-- `02-design/design.md` — architecture decisions (may be absent if Design was skipped)
-- `02-design/structure-outline.md` — vertical slices (may be absent if Design was skipped)
+Read the artifacts from previous phases (using the resolved folder path):
+- `{folder}/01-research/spec.md` — requirements (always present)
+- `{folder}/01-research/research.md` — codebase facts (always present)
+- `{folder}/02-design/design.md` — architecture decisions (may be absent if Design was skipped)
+- `{folder}/02-design/structure-outline.md` — vertical slices (may be absent if Design was skipped)
 
 If Design was skipped (no `02-design/`), that's fine — generate the plan directly from Spec + Research. The plan will be simpler but still structured.
 
-Create the artifact directory: `{{ARTIFACT_FOLDER}}/03-plan/`
+Create the artifact directory: `{folder}/03-plan/`
 
 ## Step 1: Generate the Plan
 
@@ -121,7 +130,7 @@ Tell the user: "Here's a summary of the plan. The full plan is at `03-plan/plan.
 
 ```
 Next step (clear your context before running):
-→ /rdpi-implement {{ARTIFACT_FOLDER}}
+→ /rdpi-implement {{TASK_ID}}
 ```
 
 Print this command as plain text. Do NOT use the Skill tool to invoke the next phase. The user runs it in a fresh session.

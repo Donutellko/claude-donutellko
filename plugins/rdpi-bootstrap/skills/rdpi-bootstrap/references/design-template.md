@@ -13,16 +13,25 @@ You are running the Design phase — defining *what* to build and *how*, with ar
 **Tech stack:** {{TECH_STACK}}
 **Diagram format:** {{DIAGRAM_FORMAT}}
 
+## Resolve Artifact Folder
+
+The argument passed to this skill is a Task ID or short name (e.g., `US1234` or `US1234-fix-login`). Resolve it to the artifact folder before reading any files:
+
+1. Glob `./rdpi/*{arg}*/` to find matching folders
+2. **One match** → use it
+3. **Multiple matches** → list them and ask the user to pick one
+4. **No match** → error: "No artifact folder found for '{arg}'. Run /rdpi-research first."
+
 ## Inputs
 
-Read the artifacts from the previous phase:
-- `01-research/spec.md` — requirements and constraints
-- `01-research/research.md` — codebase facts
-- `01-research/questions.md` — original research questions (for context)
+Read the artifacts from the previous phase (using the resolved folder path):
+- `{folder}/01-research/spec.md` — requirements and constraints
+- `{folder}/01-research/research.md` — codebase facts
+- `{folder}/01-research/questions.md` — original research questions (for context)
 
 If any of these are missing, tell the user and suggest running `/rdpi-research` first.
 
-Create the artifact directory: `{{ARTIFACT_FOLDER}}/02-design/`
+Create the artifact directory: `{folder}/02-design/`
 
 ## Step 1: Interactive Design Document
 
@@ -95,7 +104,7 @@ Once the user approves the Structure:
 
 ```
 Next step (clear your context before running):
-→ /rdpi-plan {{ARTIFACT_FOLDER}}
+→ /rdpi-plan {{TASK_ID}}
 ```
 
 Print this command as plain text. Do NOT use the Skill tool to invoke the next phase. The user runs it in a fresh session.

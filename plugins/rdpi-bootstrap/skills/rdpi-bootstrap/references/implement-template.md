@@ -15,16 +15,25 @@ You are running the Implement phase — executing the plan with code. You are th
 **Build command:** {{BUILD_CMD}}
 **Test command:** {{TEST_CMD}}
 
+## Resolve Artifact Folder
+
+The argument passed to this skill is a Task ID or short name (e.g., `US1234` or `US1234-fix-login`). Resolve it to the artifact folder before reading any files:
+
+1. Glob `./rdpi/*{arg}*/` to find matching folders
+2. **One match** → use it
+3. **Multiple matches** → list them and ask the user to pick one
+4. **No match** → error: "No artifact folder found for '{arg}'. Run /rdpi-research first."
+
 ## Inputs
 
-Read the artifacts from previous phases:
-- `03-plan/plan.md` — the execution plan (may be absent if Plan was skipped)
-- `01-research/spec.md` — requirements (always present)
-- `02-design/design.md` — architecture decisions (may be absent)
+Read the artifacts from previous phases (using the resolved folder path):
+- `{folder}/03-plan/plan.md` — the execution plan (may be absent if Plan was skipped)
+- `{folder}/01-research/spec.md` — requirements (always present)
+- `{folder}/02-design/design.md` — architecture decisions (may be absent)
 
 If the plan is absent, work directly from the Spec. For simple tasks this is fine — treat the Spec's acceptance criteria as your checklist.
 
-Create the artifact directory: `{{ARTIFACT_FOLDER}}/04-implement/`
+Create the artifact directory: `{folder}/04-implement/`
 
 ## Step 1: Branch Setup
 

@@ -35,10 +35,10 @@ Check if `./rdpi/RDPI_SKILLS_SPEC.md` exists.
 
 | Phase | Command |
 |-------|---------|
-| Research | `/rdpi-research <task description>` |
-| Design | `/rdpi-design ./rdpi/{folder}` |
-| Plan | `/rdpi-plan ./rdpi/{folder}` |
-| Implement | `/rdpi-implement ./rdpi/{folder}` |
+| Research | `/rdpi-research <task description or task ID>` |
+| Design | `/rdpi-design US1234` |
+| Plan | `/rdpi-plan US1234` |
+| Implement | `/rdpi-implement US1234` |
 
 > Clear context between each phase — open a fresh session before running the next command.
 
@@ -249,10 +249,10 @@ Then repeat Table 1 (commands only):
 ```
 | Phase | Command |
 |-------|---------|
-| Research | `/rdpi-research <task description>` |
-| Design | `/rdpi-design ./rdpi/{folder}` |
-| Plan | `/rdpi-plan ./rdpi/{folder}` |
-| Implement | `/rdpi-implement ./rdpi/{folder}` |
+| Research | `/rdpi-research <task description or task ID>` |
+| Design | `/rdpi-design US1234` |
+| Plan | `/rdpi-plan US1234` |
+| Implement | `/rdpi-implement US1234` |
 ```
 
 Then add: "Easy to remember — it's in the name: **R**DPI. Always start with **R**: `/rdpi-research`."

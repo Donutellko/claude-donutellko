@@ -108,17 +108,17 @@ Based on complexity assessment:
 
 | Complexity | Recommendation |
 |------------|---------------|
-| **Complex** | `/rdpi-design <folder>` — cross-module, new subsystem, unfamiliar area |
-| **Medium** | `/rdpi-plan <folder>` — skip Design, well-understood area |
-| **Simple** | `/rdpi-implement <folder>` — skip Design + Plan, just implement |
+| **Complex** | `/rdpi-design {{TASK_ID}}` — cross-module, new subsystem, unfamiliar area |
+| **Medium** | `/rdpi-plan {{TASK_ID}}` — skip Design, well-understood area |
+| **Simple** | `/rdpi-implement {{TASK_ID}}` — skip Design + Plan, just implement |
 
 Present all options with annotations:
 
 ```
 Next steps (clear your context before running):
-→ /rdpi-design {{ARTIFACT_FOLDER}}  (recommended — [reason])
-→ /rdpi-plan {{ARTIFACT_FOLDER}}    (fast — skip design)
-→ /rdpi-implement {{ARTIFACT_FOLDER}} (fastest — implement directly from spec)
+→ /rdpi-design {{TASK_ID}}  (recommended — [reason])
+→ /rdpi-plan {{TASK_ID}}    (fast — skip design)
+→ /rdpi-implement {{TASK_ID}} (fastest — implement directly from spec)
 ```
 
 The user always decides.

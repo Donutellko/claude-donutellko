@@ -12,10 +12,10 @@ Based on [Dex Horthy's Context Engineering (QRSPI)](https://www.youtube.com/watc
 
 | Phase | Command |
 |-------|---------|
-| Research | `/rdpi-research <task description>` |
-| Design | `/rdpi-design ./rdpi/{{ARTIFACT_FOLDER_FORMAT}}` |
-| Plan | `/rdpi-plan ./rdpi/{{ARTIFACT_FOLDER_FORMAT}}` |
-| Implement | `/rdpi-implement ./rdpi/{{ARTIFACT_FOLDER_FORMAT}}` |
+| Research | `/rdpi-research <task description or task ID>` |
+| Design | `/rdpi-design US1234` |
+| Plan | `/rdpi-plan US1234` |
+| Implement | `/rdpi-implement US1234` |
 
 > Clear context between each phase — open a fresh session before running the next command.
 

@@ -114,7 +114,7 @@ The skill must communicate tersely throughout — matching caveman-style rules f
 - Restating what the user said
 Applied to: interview questions, parameter confirmation, status updates, next-step prompts.
 
-### B-016: Workflow Outline After Settings Confirmation
+### ~~B-016: Workflow Outline After Settings Confirmation~~ → Resolved by B-018
 After the user confirms auto-determined settings (D-014 confirm step), the skill should output a concise workflow outline showing what RDPI will look like for THIS project. Not generic docs — personalized to the confirmed settings:
 - Commands the user will type per phase
 - What each phase produces (artifact names, paths)
@@ -128,6 +128,67 @@ Each generated phase skill must end with the next command as plain text — not 
 ### B-019: Re-run Prompt After Bootstrap Completion
 After skill generation is complete, add this line:
 "If anything in the RDPI workflow doesn't fit your needs, run `/rdpi-bootstrap <description of desired changes>` to refine it."
+
+### B-020: Branch Format Missing from Confirm Table
+Branch naming convention is auto-detected in Step 3 but never shown in the Step 5 confirmation table. Add it:
+```
+Branch format:   feature/{ticket-number}-{short-name}    (auto-detected: git log / default)
+```
+Default if not detectable from git log: `feature/{ticket-number}-{short-name}`. Also write to `RDPI_SKILLS_SPEC.md` under Discovered Conventions and pass into generated phase skills (Implement phase uses it for branch creation).
+
+### B-021: Extract and Surface Useful Instructions from Existing Project Skills
+Step 1 already discovers existing skills like `implement-feature`, `implement-story`, `implement-spec`. Currently just "extract useful context" with no further spec. This needs to be concrete:
+
+**What to do:**
+- Read each discovered project-specific skill
+- Extract: coding conventions, quality gates, agent usage patterns, workflow constraints, project-specific rules
+- Write extracted items to `RDPI_SKILLS_SPEC.md` under a new "Inherited from Existing Skills" section
+- Show a concise summary to the user in the confirm step (Step 5):
+  ```
+  Inherited from existing skills:
+    implement-feature:   uses wsbaser:code-simplifier after each slice
+    implement-story:     requires GHA CI green before PR ready
+    ...
+  ```
+- Incorporate relevant extracted instructions into the generated phase skills
+
+**Why:** Existing skills encode hard-won project conventions. Ignoring them means regenerating rules that are already known.
+
+### B-024: Simpler Command Format — Task ID Instead of Folder Path
+Current commands after Research are unfriendly:
+```
+/rdpi-design ./rdpi/2026-04-06-US1234-fix-login
+```
+New format — user passes Task ID or short name, skill resolves the folder:
+```
+/rdpi-research US1234-fix-login
+/rdpi-design US1234
+/rdpi-plan US1234
+/rdpi-implement US1234
+```
+Each phase skill:
+1. Accepts a Task ID or description as argument (not a folder path)
+2. Resolves the artifact folder by globbing `./rdpi/*{task-id}*/` — picks the most recent match
+3. If ambiguous (multiple matches), lists them and asks the user to confirm
+4. If no match found for Design/Plan/Implement, errors with: "No artifact folder found for '{arg}'. Run /rdpi-research first."
+
+Update in: SKILL.md Step 0 intro table, all 4 phase templates (references/), SPEC.md phase descriptions.
+
+### B-022: Multi-Service Scope Question
+In monorepos with multiple independent services (e.g. 7 agents each with their own Makefile, pyproject.toml, CLAUDE.md), bootstrap must ask: "Which service(s) will you use RDPI for?" before generating skills. Generated skills must be scoped to a specific service root — not repo root — so `make check`, `make tests`, and file paths resolve correctly.
+**What to detect:** multiple `pyproject.toml` or `Makefile` files at depth >1 → trigger the question.
+**Output:** write chosen service path(s) to RDPI_SKILLS_SPEC.md. Generated skills use that path as working root.
+
+### B-023: Missing Fields in Confirm Table
+Add to Step 5 confirmation table:
+```
+Branch format:   feature/US{id}-{short-name}     (auto-detected: git log / CLAUDE.md)
+Commit style:    type: message                    (auto-detected: git log)
+Ticket format:   US{id}                           (auto-detected: CLAUDE.md / Rally)
+Quality gate:    ruff + mypy + pytest + cov ≥30%  (auto-detected: Makefile)
+```
+Branch format default if not detectable: `feature/{ticket-id}-{short-name}`.
+All four fields written to RDPI_SKILLS_SPEC.md under Discovered Conventions.
 
 ### B-013: Artifacts Replace Compaction — Disable Auto-Compaction
 Principle 2 says artifacts replace compaction. Should the generated skills explicitly instruct Claude to avoid auto-compaction? Or is this handled by the clean-context-per-phase design?
