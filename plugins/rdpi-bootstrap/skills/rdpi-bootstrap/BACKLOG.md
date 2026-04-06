@@ -205,6 +205,21 @@ Quality gate:    ruff + mypy + pytest + cov ≥30%  (auto-detected: Makefile)
 Branch format default if not detectable: `feature/{ticket-id}-{short-name}`.
 All four fields written to RDPI_SKILLS_SPEC.md under Discovered Conventions.
 
+### B-026: Pre-Branch Git State Check in Implement
+
+Before creating a feature branch, the generated `rdpi-implement` skill must check git state:
+
+1. **Current branch** — must be on `main`. If not, warn and ask user if they want to switch.
+2. **Uncommitted changes** (`git status --short`) — if any, stop and ask: commit, stash, or discard?
+3. **Unpushed commits** (`git log @{u}..HEAD --oneline`) — if any, notify and ask: push first or proceed?
+4. **Sync with remote** (`git fetch origin main` + compare) — if behind, pull automatically. If ahead or diverged, notify and ask.
+
+Only after all checks pass: `git checkout -b feature/{task-id}-{short-description}`.
+
+Update in: generated `rdpi-implement` skill template (`references/implement-template.md`), Step 1: Branch Setup.
+
+---
+
 ### B-013: Artifacts Replace Compaction — Disable Auto-Compaction
 Principle 2 says artifacts replace compaction. Should the generated skills explicitly instruct Claude to avoid auto-compaction? Or is this handled by the clean-context-per-phase design?
 

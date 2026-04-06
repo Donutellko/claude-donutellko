@@ -34,15 +34,25 @@ Create the artifact directory: `{folder}/04-implement/`
 
 ## Step 1: Branch Setup
 
-Before writing any code, ensure a clean starting point:
+Before writing any code, check git state:
 
-1. Check you're on a fresh branch from up-to-date main:
-   ```
-   git checkout main
-   git pull
-   git checkout -b {task-id}/{short-description}
-   ```
-2. If the user already has a branch, confirm it's up to date with main
+```
+git branch --show-current
+git status --short
+git log @{u}..HEAD --oneline
+```
+
+- If **not on `main`**: warn the user.
+- If there are **uncommitted changes**: warn the user, ask what to do (commit, stash, or discard).
+- If there are **unpushed commits**: warn the user, ask: push first or proceed?
+
+Then sync and branch:
+
+```
+git fetch origin main
+git pull          # only if main is behind origin/main
+git checkout -b {task-id}/{short-description}
+```
 
 This is non-negotiable — never implement on main or a stale branch.
 
